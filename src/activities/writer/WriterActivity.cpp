@@ -362,7 +362,8 @@ void WriterActivity::renderFooter() const {
 
   // Current wordcount
   const int words = countWords(draftText);
-  std::string wordCount = std::to_string(words) + (words == 1 ? " word" : " words");
+  const char* wordLabel = words == 1 ? tr(STR_WRITER_WORD) : tr(STR_WRITER_WORDS);
+  std::string wordCount = std::to_string(words) + " " + wordLabel;
   int wordCountWidth = renderer.getTextWidth(SMALL_FONT_ID, wordCount.c_str());
 
   renderer.drawText(SMALL_FONT_ID,
