@@ -295,7 +295,7 @@ int WriterActivity::measureCursorX(const WriterWrappedLayout::Line& line, const 
   const size_t safeLineEnd = std::max(line.endOffset, line.startOffset);
   const size_t clampedOffset = std::clamp(cursorOffset, line.startOffset, safeLineEnd);
   const std::string prefix = WriterTextSlice::slice(draftText, line.startOffset, clampedOffset);
-  return renderer.getTextWidth(UI_10_FONT_ID, prefix.c_str());
+  return renderer.getTextAdvanceX(UI_10_FONT_ID, prefix.c_str(), EpdFontFamily::REGULAR);
 }
 
 size_t WriterActivity::findClosestCursorOffsetOnLine(const WriterWrappedLayout::Line& line,
