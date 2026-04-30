@@ -129,7 +129,8 @@ void WriterActivity::render(RenderLock&&) {
     const std::string lineText = getLineText(line);
     renderer.drawText(UI_10_FONT_ID, x, y, lineText.c_str());
     if (lineIndex == cursorLine) {
-      const size_t caretOffset = std::clamp(cursorIndex, line.startOffset, line.endOffset);
+      const size_t safeLineEnd = std::max(line.endOffset, line.startOffset);
+      const size_t caretOffset = std::clamp(cursorIndex, line.startOffset, safeLineEnd);
       const int caretX = x + measureCursorX(line, caretOffset);
       const int caretBottom = y + lineHeight - 1;
       renderer.fillRect(caretX, y, 2, lineHeight, true);
