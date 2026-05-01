@@ -75,6 +75,10 @@ bool WriterDraftStore::readDraft(std::string& out) {
   constexpr size_t MaxDraftDisplayBytes = 64 * 1024;
   const size_t fileSize = file.size();
   const size_t startOffset = fileSize > MaxDraftDisplayBytes ? fileSize - MaxDraftDisplayBytes : 0;
+  const size_t expectedBytes = fileSize - startOffset;
+  if (out.capacity() < expectedBytes) {
+    out.reserve(expectedBytes);
+  }
 
   if (startOffset > 0 && !file.seekSet(startOffset)) {
     LOG_ERR("Writer", "Failed to seek draft file: %s (%zu/%zu bytes)", DraftPath, startOffset, fileSize);
