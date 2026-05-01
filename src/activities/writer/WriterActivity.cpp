@@ -356,9 +356,9 @@ void WriterActivity::renderFooter() const {
   }
 
   // Filename we're working on
-  std::string title = draftStore.getDraftDisplayName();
-  int titleWidth = renderer.getTextWidth(SMALL_FONT_ID, title.c_str());
-  renderer.drawText(SMALL_FONT_ID, (renderer.getScreenWidth() - titleWidth) / 2, footer.top, title.c_str());
+  const char* title = draftStore.getDraftDisplayName();
+  int titleWidth = renderer.getTextWidth(SMALL_FONT_ID, title);
+  renderer.drawText(SMALL_FONT_ID, (renderer.getScreenWidth() - titleWidth) / 2, footer.top, title);
 
   // Current wordcount
   const int words = countWords(draftText);

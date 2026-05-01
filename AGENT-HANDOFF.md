@@ -49,8 +49,6 @@ git rev-list --left-right --count master...upstream/master
 # Writer helper tests
 bash test/run_writer_cursor_test.sh
 bash test/run_writer_wrapped_layout_test.sh
-bash test/run_writer_viewport_test.sh
-bash test/run_writer_visible_lines_test.sh
 
 # Builds
 pio run -e simulator
@@ -162,7 +160,7 @@ Git workflow preferences:
 - `master` previously tracked `upstream/master`; this was changed because it confused VSCode and push/pull prompts.
 - PlatformIO simulator env is Apple Silicon/Homebrew-specific. This is deferred and not a Writer PR blocker.
 - Simulator dependency is currently `mahood73/crosspoint-simulator#dev`; pinning to a commit is deferred until simulator work stabilizes.
-- `WriterVisibleLines` is effectively dead/unused after cursor-aware viewport work. It is a cleanup candidate, not active rendering path.
+- `WriterVisibleLines` was removed after cursor-aware viewport work made it unused.
 - `onExit()` does not flush as a final fallback. Current user-driven exits already flush through Back/Confirm. Revisit when draft switching/menu-driven exits exist.
 - `readDraft()` reads only the last 64KB. It aligns the tail window to avoid beginning on a UTF-8 continuation byte, but full-document paging/windowing is deferred.
 - First render/open of a large draft can still be slower because wrapping must be computed once.
@@ -207,7 +205,6 @@ Git workflow preferences:
    - Replace 64KB tail-only model with paging/windowing inspired by TXT reader.
 
 8. **Cleanup**
-   - Remove/refactor `WriterVisibleLines`.
    - Consider resolving duplicate render text/word count scan.
    - Revisit simulator dependency pinning.
 
@@ -227,8 +224,6 @@ Writer implementation:
 - `src/activities/writer/WriterInput.h`
 - `src/activities/writer/WriterSimInput.cpp`
 - `src/activities/writer/WriterSimInput.h`
-- `src/activities/writer/WriterViewport.cpp`
-- `src/activities/writer/WriterViewport.h`
 
 Integration:
 
@@ -243,8 +238,6 @@ Tests:
 - `test/run_writer_wrapped_layout_test.sh`
 - `test/writer_cursor/WriterCursorTest.cpp`
 - `test/run_writer_cursor_test.sh`
-- `test/writer_viewport/WriterViewportTest.cpp`
-- `test/run_writer_viewport_test.sh`
 
 Docs:
 

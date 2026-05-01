@@ -3,30 +3,30 @@
 #include <HalStorage.h>
 #include <Logging.h>
 
+#include <cstring>
+
 #include "WriterCursor.h"
 #include "WriterFile.h"
 
 // Check draft folder exists
 bool WriterDraftStore::ensureDraft() {
-  const std::string folderPath = DraftDir;
-  const std::string draftPath = DraftPath;
-  if (!Storage.exists(folderPath.c_str())) {
+  if (!Storage.exists(DraftDir)) {
     // Create the folder
-    if (!Storage.mkdir(folderPath.c_str())) {
-      LOG_ERR("Writer", "Failed to create folder: %s", folderPath.c_str());
+    if (!Storage.mkdir(DraftDir)) {
+      LOG_ERR("Writer", "Failed to create folder: %s", DraftDir);
       return false;
     }
-    LOG_DBG("Writer", "Folder created successfully: %s", folderPath.c_str());
+    LOG_DBG("Writer", "Folder created successfully: %s", DraftDir);
   }
 
-  if (!Storage.exists(draftPath.c_str())) {
+  if (!Storage.exists(DraftPath)) {
     // Create the file
     HalFile file;
-    if (!Storage.openFileForWrite("Writer", draftPath, file)) {
-      LOG_ERR("Writer", "Failed to create file: %s", draftPath.c_str());
+    if (!Storage.openFileForWrite("Writer", DraftPath, file)) {
+      LOG_ERR("Writer", "Failed to create file: %s", DraftPath);
       return false;
     }
-    LOG_DBG("Writer", "Draft file created successfully: %s", draftPath.c_str());
+    LOG_DBG("Writer", "Draft file created successfully: %s", DraftPath);
     file.close();
   }
 
@@ -34,15 +34,13 @@ bool WriterDraftStore::ensureDraft() {
 }
 
 bool WriterDraftStore::appendToDraft(const std::string& text) {
-  const std::string draftPath = DraftPath;
-
   if (!ensureDraft()) {
     return false;
   }
 
   HalFile file;
-  if (!WriterFile::openForAppend(draftPath.c_str(), file)) {
-    LOG_ERR("Writer", "Failed to open draft file for append: %s", draftPath.c_str());
+  if (!WriterFile::openForAppend(DraftPath, file)) {
+    LOG_ERR("Writer", "Failed to open draft file for append: %s", DraftPath);
     return false;
   }
 
@@ -50,11 +48,11 @@ bool WriterDraftStore::appendToDraft(const std::string& text) {
   file.close();
 
   if (bytesWritten != text.size()) {
-    LOG_ERR("Writer", "Failed to append full text: %s (%zu/%zu bytes)", draftPath.c_str(), bytesWritten, text.size());
+    LOG_ERR("Writer", "Failed to append full text: %s (%zu/%zu bytes)", DraftPath, bytesWritten, text.size());
     return false;
   }
 
-  LOG_DBG("Writer", "Appended to draft file: %s (%zu bytes)", draftPath.c_str(), bytesWritten);
+  LOG_DBG("Writer", "Appended to draft file: %s (%zu bytes)", DraftPath, bytesWritten);
   return true;
 }
 
@@ -123,8 +121,7 @@ bool WriterDraftStore::readDraft(std::string& out) {
   return true;
 }
 
-std::string WriterDraftStore::getDraftDisplayName() const {
-  std::string path = DraftPath;
-  const size_t slash = path.find_last_of('/');
-  return slash == std::string::npos ? path : path.substr(slash + 1);
-};
+const char* WriterDraftStore::getDraftDisplayName() const {
+  const char* slash = std::strrchr(DraftPath, '/');
+  return slash == nullptr ? DraftPath : slash + 1;
+}
